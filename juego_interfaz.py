@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import messagebox
-from juego_logica import JuegoLogica
 
 class JuegoInterfaz:
     def __init__(self, master, game_logic):
@@ -8,23 +7,20 @@ class JuegoInterfaz:
         self.game_logic = game_logic
 
         self.master.title("Tres en Raya")
-        self.master.configure(bg="#f0f0f0")  # Fondo principal en un tono gris claro
+        self.master.configure(bg="#f0f0f0")
 
-        # Configuración de los nombres de los jugadores
         self.label_nombre_j1 = tk.Label(self.master, text="", font=('Arial', 16), bg="#f0f0f0", fg="#543C33")
         self.label_nombre_j1.grid(row=0, column=0, pady=10, padx=10)
 
         self.label_nombre_j2 = tk.Label(self.master, text="", font=('Arial', 16), bg="#f0f0f0", fg="#543C33")
         self.label_nombre_j2.grid(row=0, column=2, pady=10, padx=10)
 
-        # Configuración de las victorias de los jugadores
         self.label_victorias_j1 = tk.Label(self.master, text="", font=('Arial', 16), bg="#f0f0f0", fg="#543C33")
         self.label_victorias_j1.grid(row=1, column=0, pady=10, padx=10)
 
         self.label_victorias_j2 = tk.Label(self.master, text="", font=('Arial', 16), bg="#f0f0f0", fg="#543C33")
         self.label_victorias_j2.grid(row=1, column=2, pady=10, padx=10)
 
-        # Configuración del tablero de juego
         self.botones = []
         for i in range(3):
             for j in range(3):
@@ -34,11 +30,9 @@ class JuegoInterfaz:
                 boton.grid(row=i + 2, column=j, padx=10, pady=10)
                 self.botones.append(boton)
 
-        # Configuración del mensaje de resultado
         self.label_resultado = tk.Label(self.master, text="", font=('Arial', 16), bg="#f0f0f0", fg="#543C33")
         self.label_resultado.grid(row=5, column=0, columnspan=3, pady=10, padx=10)
 
-        # Botón para reiniciar partida
         self.btn_reiniciar = tk.Button(self.master, text="Reiniciar Partida", font=('Arial', 14),
                                        command=self.reiniciar_partida, state=tk.DISABLED, bg="#543C33", fg="white",
                                        activebackground="#382B20", activeforeground="white")
@@ -77,16 +71,14 @@ class JuegoInterfaz:
         self.label_victorias_j2.config(text=f"Victorias {self.game_logic.jugadores[1]}: {self.game_logic.victorias[1]}")
 
     def actualizar_interfaz(self):
-        self.master.withdraw()  # Oculta la ventana principal
+        self.master.withdraw()
 
-        # Mostrar nombres de los jugadores
         self.label_nombre_j1.config(text=f"{self.game_logic.jugadores[0]} (X):")
         self.label_nombre_j2.config(text=f"{self.game_logic.jugadores[1]} (O):")
 
-        # Mostrar quién comienza
         self.label_resultado.config(text=f"Comienza {self.game_logic.jugadores[self.game_logic.turno]}")
 
-        self.master.deiconify()  # Muestra de nuevo la ventana principal
+        self.master.deiconify()
 
     def reiniciar_partida(self):
         self.label_resultado.config(text="")
@@ -104,7 +96,7 @@ class IngresoNombres(tk.Toplevel):
         self.parent = parent
         self.callback = callback
         self.title("Ingreso de Nombres")
-        self.configure(bg="#f0f0f0")  # Fondo en un tono gris claro
+        self.configure(bg="#f0f0f0")
 
         self.label_jugador1 = tk.Label(self, text="Ingrese el nombre del Jugador 1 (X):", font=('Arial', 14), bg="#f0f0f0", fg="#543C33")
         self.label_jugador1.grid(row=0, column=0, padx=10, pady=10)
