@@ -2,8 +2,7 @@ import random
 
 class JuegoLogica:
     def __init__(self):
-        self.tablero = [["" for _ in range(3)] for _ in range(3)]
-        self.turno = random.randint(0, 1)
+        self.reiniciar_juego()
         self.jugadores = ["", ""]
         self.victorias = [0, 0]
 
@@ -15,8 +14,7 @@ class JuegoLogica:
                 self.victorias[self.turno] += 1
             self.turno = 1 - self.turno
             return ganador
-        else:
-            return None
+        return None
 
     def chequear_ganador(self):
         for i in range(3):
@@ -35,6 +33,7 @@ class JuegoLogica:
     def reiniciar_juego(self):
         self.turno = random.randint(0, 1)
         self.tablero = [["" for _ in range(3)] for _ in range(3)]
+
 
 
 
