@@ -6,6 +6,7 @@ class JuegoLogica:
         self.jugadores = ["", ""]
         self.victorias = [0, 0]
         self.vs_ia = False
+        self.dificultad = 0.3
 
     def jugar(self, fila, col):
         if self.tablero[fila][col] == "":
@@ -18,7 +19,7 @@ class JuegoLogica:
         return None
 
     def jugar_ia(self):
-        if random.random() < 0.3:
+        if random.random() < self.dificultad:
             movimientos_posibles = [(i, j) for i in range(3) for j in range(3) if self.tablero[i][j] == ""]
             mejor_movimiento = random.choice(movimientos_posibles)
         else:

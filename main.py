@@ -13,8 +13,9 @@ def centrar_ventana(ventana, ancho, alto):
 def empezar_juego():
     nombres = ingreso_nombres.obtener_nombres()
     if nombres:
-        game_logic.jugadores = nombres[:2] if not ingreso_nombres.vs_ia else [nombres[0], "IA"]
+        game_logic.jugadores = nombres[:2] if not ingreso_nombres.vs_ia else [nombres[0], f"IA ({ingreso_nombres.dificultad.get()[0]})"]
         game_logic.vs_ia = ingreso_nombres.vs_ia
+        game_logic.dificultad = ingreso_nombres.obtener_dificultad()
         game_board = JuegoInterfaz(root, game_logic)
         root.deiconify()
         centrar_ventana(root, 580, 790)
@@ -35,7 +36,7 @@ if __name__ == "__main__":
 
     game_logic = JuegoLogica()
     ingreso_nombres = IngresoNombres(root, empezar_juego)
-    centrar_ventana(ingreso_nombres, 600, 150)
+    centrar_ventana(ingreso_nombres, 580, 270)
 
     root.mainloop()
     pygame.quit()

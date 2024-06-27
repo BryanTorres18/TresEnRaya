@@ -158,6 +158,8 @@ class IngresoNombres(tk.Toplevel):
         self.parent = parent
         self.callback = callback
         self.vs_ia = False
+        self.dificultad = tk.StringVar(value="Medio")
+
         self.configurar_ventana()
 
         self.label_jugador1 = tk.Label(self, text="Ingrese el nombre del Jugador 1 (X):", font=('Arial', 14),
@@ -176,19 +178,28 @@ class IngresoNombres(tk.Toplevel):
 
         self.checkbox_vs_ia = tk.Checkbutton(self, text="Jugar contra la IA", font=('Arial', 14), bg="#f0f0f0",
                                              fg="#543C33", command=self.toggle_vs_ia)
-        self.checkbox_vs_ia.grid(row=2, column=1, columnspan=2, padx=10, pady=10)
+        self.checkbox_vs_ia.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
+
+        self.label_dificultad = tk.Label(self, text="Dificultad de la IA:", font=('Arial', 14), bg="#f0f0f0",
+                                         fg="#543C33")
+        self.label_dificultad.grid(row=3, column=0, padx=10, pady=10, sticky='e')
+        self.selector_dificultad = tk.OptionMenu(self, self.dificultad, "Fácil", "Medio", "Difícil")
+        self.selector_dificultad.config(font=('Arial', 14), bg="#d3d3d3", fg="grey", state=tk.DISABLED)
+        self.selector_dificultad.grid(row=3, column=1, padx=10, pady=10, sticky='w')
 
         self.btn_confirmar = tk.Button(self, text="Confirmar", font=('Arial', 14), bg="#543C33", fg="white",
                                        command=self.on_confirmar, activebackground="#382B20", activeforeground="white")
-        self.btn_confirmar.grid(row=2, columnspan=2, padx=10, pady=10)
+        self.btn_confirmar.grid(row=4, columnspan=2, padx=10, pady=10)
 
     def toggle_vs_ia(self):
         self.vs_ia = not self.vs_ia
         if self.vs_ia:
             self.entry_jugador2.config(state=tk.DISABLED, disabledbackground="#d3d3d3", disabledforeground="grey")
             self.entry_jugador2.delete(0, tk.END)
+            self.selector_dificultad.config(bg="#f0f0f0", fg="#543C33", state=tk.NORMAL)
         else:
             self.entry_jugador2.config(state=tk.NORMAL, disabledbackground=self.cget('bg'), disabledforeground="black")
+            self.selector_dificultad.config(bg="#d3d3d3", fg="grey", state=tk.DISABLED)
 
     def configurar_ventana(self):
         self.title("Ingreso de Nombres")
@@ -209,15 +220,25 @@ class IngresoNombres(tk.Toplevel):
 
     def on_confirmar(self):
         nombre_jugador1 = self.entry_jugador1.get()
-        nombre_jugador2 = self.entry_jugador2.get() if not self.vs_ia else "IA"
+        nombre_jugador2 = self.entry_jugador2.get() if not self.vs_ia else f"IA ({self.dificultad.get()[0]})"
         if nombre_jugador1 and (nombre_jugador2 or self.vs_ia):
             self.callback()
         else:
             messagebox.showerror("Error", "Debe ingresar nombres para ambos jugadores")
 
     def obtener_nombres(self):
-        return [self.entry_jugador1.get(), self.entry_jugador2.get() if not self.vs_ia else "IA"]
+        return [self.entry_jugador1.get(), self.entry_jugador2.get() if not self.vs_ia else f"IA ({self.dificultad.get()[0]})"]
 
+    def obtener_dificultad(self):
+        dificultad = self.dificultad.get()
+        if dificultad == "Fácil":
+            return 0.5
+        elif dificultad == "Medio":
+            return 0.4
+        elif dificultad == "Difícil":
+            return 0.2
+        else:
+            return 0.4
 
 
 
