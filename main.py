@@ -13,12 +13,16 @@ def centrar_ventana(ventana, ancho, alto):
 def empezar_juego():
     nombres = ingreso_nombres.obtener_nombres()
     if nombres:
-        game_logic.jugadores = nombres
+        game_logic.jugadores = nombres[:2] if not ingreso_nombres.vs_ia else [nombres[0], "IA"]
+        game_logic.vs_ia = ingreso_nombres.vs_ia
         game_board = JuegoInterfaz(root, game_logic)
         root.deiconify()
         centrar_ventana(root, 580, 790)
         ingreso_nombres.destroy()
         pygame.mixer.music.play(-1)
+
+        if game_logic.vs_ia and game_logic.turno == 1:
+            game_board.master.after(1000, game_board.jugar_ia)
 
 if __name__ == "__main__":
     pygame.init()

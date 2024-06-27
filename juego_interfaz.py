@@ -72,9 +72,9 @@ class JuegoInterfaz:
     def jugar(self, fila, col):
         if self.game_logic.chequear_ganador() is None:
             resultado = self.game_logic.jugar(fila, col)
+            self.click_sound.play()
+            self.actualizar_tablero()
             if resultado:
-                self.click_sound.play()
-                self.actualizar_tablero()
                 if resultado == "Empate":
                     self.label_resultado.config(text="¡Es un empate!")
                     self.draw_sound.play()
@@ -88,9 +88,34 @@ class JuegoInterfaz:
                     for boton in self.botones:
                         boton.config(state=tk.DISABLED)
             else:
-                self.click_sound.play()
-                self.actualizar_tablero()
                 self.actualizar_turno()
+                if self.game_logic.vs_ia and self.game_logic.turno == 1:
+                    for boton in self.botones:
+                        boton.config(state=tk.DISABLED)
+                    self.master.after(1000, self.jugar_ia)
+
+
+    def jugar_ia(self):
+        resultado = self.game_logic.jugar_ia()
+        self.click_sound.play()
+        self.actualizar_tablero()
+        if resultado:
+            if resultado == "Empate":
+                self.label_resultado.config(text="¡Es un empate!")
+                self.draw_sound.play()
+            else:
+                nombre_ganador = self.game_logic.jugadores[0] if resultado == 'X' else self.game_logic.jugadores[1]
+                self.label_resultado.config(text=f"¡{nombre_ganador} ha ganado!")
+                self.win_sound.play()
+            self.actualizar_victorias()
+            self.btn_reiniciar.config(state=tk.NORMAL)
+            if resultado != "Empate":
+                for boton in self.botones:
+                    boton.config(state=tk.DISABLED)
+        else:
+            self.actualizar_turno()
+            for boton in self.botones:
+                boton.config(state=tk.NORMAL)
 
     def actualizar_tablero(self):
         for i in range(3):
@@ -132,6 +157,7 @@ class IngresoNombres(tk.Toplevel):
         super().__init__(parent)
         self.parent = parent
         self.callback = callback
+        self.vs_ia = False
         self.configurar_ventana()
 
         self.label_jugador1 = tk.Label(self, text="Ingrese el nombre del Jugador 1 (X):", font=('Arial', 14),
@@ -148,10 +174,21 @@ class IngresoNombres(tk.Toplevel):
         self.entry_jugador2['validatecommand'] = (self.entry_jugador2.register(validar_longitud), '%P')
         self.entry_jugador2.grid(row=1, column=1, padx=10, pady=10, sticky='w')
 
+        self.checkbox_vs_ia = tk.Checkbutton(self, text="Jugar contra la IA", font=('Arial', 14), bg="#f0f0f0",
+                                             fg="#543C33", command=self.toggle_vs_ia)
+        self.checkbox_vs_ia.grid(row=2, column=1, columnspan=2, padx=10, pady=10)
+
         self.btn_confirmar = tk.Button(self, text="Confirmar", font=('Arial', 14), bg="#543C33", fg="white",
                                        command=self.on_confirmar, activebackground="#382B20", activeforeground="white")
         self.btn_confirmar.grid(row=2, columnspan=2, padx=10, pady=10)
 
+    def toggle_vs_ia(self):
+        self.vs_ia = not self.vs_ia
+        if self.vs_ia:
+            self.entry_jugador2.config(state=tk.DISABLED, disabledbackground="#d3d3d3", disabledforeground="grey")
+            self.entry_jugador2.delete(0, tk.END)
+        else:
+            self.entry_jugador2.config(state=tk.NORMAL, disabledbackground=self.cget('bg'), disabledforeground="black")
 
     def configurar_ventana(self):
         self.title("Ingreso de Nombres")
@@ -172,14 +209,14 @@ class IngresoNombres(tk.Toplevel):
 
     def on_confirmar(self):
         nombre_jugador1 = self.entry_jugador1.get()
-        nombre_jugador2 = self.entry_jugador2.get()
-        if nombre_jugador1 and nombre_jugador2:
+        nombre_jugador2 = self.entry_jugador2.get() if not self.vs_ia else "IA"
+        if nombre_jugador1 and (nombre_jugador2 or self.vs_ia):
             self.callback()
         else:
             messagebox.showerror("Error", "Debe ingresar nombres para ambos jugadores")
 
     def obtener_nombres(self):
-        return [self.entry_jugador1.get(), self.entry_jugador2.get()]
+        return [self.entry_jugador1.get(), self.entry_jugador2.get() if not self.vs_ia else "IA"]
 
 
 
